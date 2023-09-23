@@ -95,7 +95,9 @@ html {
   }
   
   /* Hidden */
-  
+  .hidden {
+    display: none;
+  }
   
   /* Large Smartphone (Vertical) */
   @media screen and (max-width: 800px) {
