@@ -10,7 +10,9 @@ const count = 10;
 const apiKey = 'RmeDfdfWNpBNrgrpbjggUofYwcOOqPiKCAfoP3f2';
 const apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&count=${count}`;
 
+// Inizialize Arrays and Objects
 let resultsArray = [];
+let favorites = {};
 
 // Update DOM (Add Cards into HTML)
 function updateDOM() {
@@ -40,6 +42,7 @@ function updateDOM() {
         const saveText = document.createElement('p'); //Create the p
         saveText.classList.add('clickable'); //Add the class tot he p
         saveText.textContent = 'Add to Favorites'; //Add the text to the p
+        saveText.setAttribute('onclick', `saveFavorite('${result.url}')`); //Add onclick attribute
         //Card Text
         const cardText = document.createElement('p'); //Create the p
         cardText.textContent = result.explanation; //Add the text to the p
@@ -73,6 +76,26 @@ async function getNasaPictures() {
     } catch (error) {
         // Catch Error Here
     }
+}
+
+// Add results to Favorites
+function saveFavorite(itemUrl) {
+    //Loop through resultArray to select Favorite
+    resultsArray.forEach((item) => {
+        //If the item url contain the item url and not yet include the favourite item url
+        if(item.url.includes(itemUrl) && !favorites[itemUrl]) {
+            favorites[itemUrl] = item; //Add to the favorites obj the item with a key of itemUrl
+            console.log(favorites); //Console should print the favorites obj with key of itemUrl and value an object that contain alla the data
+            //Show save confirmation for 2 seconds
+            saveConfirmed.hidden = false
+            setTimeout(() => {
+                saveConfirmed.hidden = true
+            }, 2000);
+            //Store favoritest into local storage (remember that to store something on servers local or not we need to convert it into json using JSON.stringfy() method)
+            localStorage.setItem('nasaFavorites', JSON.stringify(favorites)); //Set local store using 'key' and JSON.stringify(value);
+            console.log(localStorage)
+        }
+    })
 }
 
 // On Load
