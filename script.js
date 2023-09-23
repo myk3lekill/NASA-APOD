@@ -1,6 +1,6 @@
 // DOM
-const resultsNav = document.getElementById('resultNav');
-const favoritesNav = document.getElementById('favouritesNav');
+const resultsNav = document.getElementById('resultsNav');
+const favoritesNav = document.getElementById('favoritesNav');
 const imagesContainer = document.querySelector('.images-container');
 const saveConfirmed = document.querySelector('.save-confirmed');
 const loader = document.querySelector('.loader');
@@ -15,8 +15,19 @@ let resultsArray = [];
 let favorites = {};
 
 // Show content 
-function showContent() {
-    loader.classList.add('hidden')
+function showContent(page) {
+    //Scroll to the top instantly when loader is removed
+    window.scrollTo({top:0, behavior:'instant'});
+    //Manipulate the Nav bar
+    if (page === 'results') {
+        resultsNav.classList.remove('hidden');
+        favoritesNav.classList.add('hidden');
+    } else {
+        resultsNav.classList.add('hidden');
+        favoritesNav.classList.remove('hidden'); 
+    };
+    //Remove the loader
+    loader.classList.add('hidden');
 }
 
 // Create DOM
@@ -90,7 +101,7 @@ function updateDOM(page) {
     // Create the DOM for the Main HTML Page
     createDOMNodes(page);
     // Show content
-    showContent();
+    showContent(page);
 }
 
 // Get 10 images from NASA API
