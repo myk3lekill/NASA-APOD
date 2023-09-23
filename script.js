@@ -14,6 +14,11 @@ const apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&count=${co
 let resultsArray = [];
 let favorites = {};
 
+// Show content 
+function showContent() {
+    loader.classList.add('hidden')
+}
+
 // Create DOM
 function createDOMNodes(page) {
     const currentArray = page === 'results' ? resultsArray : Object.values(favorites); //Ternary operator to check if the page is the 'result' use the currentArray otherwise use the favorites
@@ -84,16 +89,20 @@ function updateDOM(page) {
     imagesContainer.textContent = '';
     // Create the DOM for the Main HTML Page
     createDOMNodes(page);
+    // Show content
+    showContent();
 }
 
 // Get 10 images from NASA API
-async function getNasaPictures(page) {
+async function getNasaPictures() {
+    //Show Loader
+    loader.classList.remove('hidden')
     try {
         // Fetch Request
         const response = await fetch(apiUrl);
         resultsArray = await response.json() //populate the array with api result in json format
         //console.log(resultsArray);
-        updateDOM('favorites');//Update the DOM - use 'favorites' as parameter to pass favorites to the function and shoe the favrite page
+        updateDOM('results');//Update the DOM - use 'favorites' as parameter to pass favorites to the function and show the favorite page - Use 'results as parameter to pass results of the NASA api
     } catch (error) {
         // Catch Error Here
     }
