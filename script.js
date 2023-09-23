@@ -14,9 +14,11 @@ const apiUrl = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&count=${co
 let resultsArray = [];
 let favorites = {};
 
-// Update DOM (Add Cards into HTML)
-function updateDOM() {
-    resultsArray.forEach((result) => { //Execute the Arrow Function for each element in the array. 
+// Create DOM
+function createDOMNodes(page) {
+    const currentArray = page === 'results' ? resultsArray : Object.values(favorites); //Ternary operator to check if the page is the 'result' use the currentArray otherwise use the favorites
+    console.log('current array',page, currentArray)
+    currentArray.forEach((result) => { //Execute the Arrow Function for each element in the array. 
         //Card Container
         const card = document.createElement('div'); //Create the div
         card.classList.add('card'); //Add the class to the div
@@ -65,14 +67,25 @@ function updateDOM() {
     });
 }
 
+// Update DOM (Add Cards into HTML)
+function updateDOM(page) {
+    // Get Favorites from local storage
+    if (localStorage.getItem('nasaFavorites')) {
+        favorites = JSON.parse(localStorage.getItem('nasaFavorites'));
+        console.log('favorites from localStorage', favorites)
+    };
+    // Create the DOM for the Main HTML Page
+    createDOMNodes(page);
+}
+
 // Get 10 images from NASA API
-async function getNasaPictures() {
+async function getNasaPictures(page) {
     try {
         // Fetch Request
         const response = await fetch(apiUrl);
         resultsArray = await response.json() //populate the array with api result in json format
-        console.log(resultsArray);
-        updateDOM();//Update the DOM
+        //console.log(resultsArray);
+        updateDOM('favorites');//Update the DOM - use 'favorites' as parameter to pass favorites to the function and shoe the favrite page
     } catch (error) {
         // Catch Error Here
     }
@@ -85,7 +98,7 @@ function saveFavorite(itemUrl) {
         //If the item url contain the item url and not yet include the favourite item url
         if(item.url.includes(itemUrl) && !favorites[itemUrl]) {
             favorites[itemUrl] = item; //Add to the favorites obj the item with a key of itemUrl
-            console.log(favorites); //Console should print the favorites obj with key of itemUrl and value an object that contain alla the data
+            //console.log(favorites); //Console should print the favorites obj with key of itemUrl and value an object that contain alla the data
             //Show save confirmation for 2 seconds
             saveConfirmed.hidden = false
             setTimeout(() => {
@@ -93,7 +106,7 @@ function saveFavorite(itemUrl) {
             }, 2000);
             //Store favoritest into local storage (remember that to store something on servers local or not we need to convert it into json using JSON.stringfy() method)
             localStorage.setItem('nasaFavorites', JSON.stringify(favorites)); //Set local store using 'key' and JSON.stringify(value);
-            console.log(localStorage)
+            //console.log(localStorage)
         }
     })
 }
