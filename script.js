@@ -43,8 +43,14 @@ function createDOMNodes(page) {
         //Save Text
         const saveText = document.createElement('p'); //Create the p
         saveText.classList.add('clickable'); //Add the class tot he p
-        saveText.textContent = 'Add to Favorites'; //Add the text to the p
-        saveText.setAttribute('onclick', `saveFavorite('${result.url}')`); //Add onclick attribute
+        //Show 'Add to Favorites' only if the html is different from the favorite one
+        if (page === 'results') {
+            saveText.textContent = 'Add to Favorites'; //Add the text to the p
+            saveText.setAttribute('onclick', `saveFavorite('${result.url}')`); //Add onclick attribute to add item to favorites
+        } else {
+            saveText.textContent = 'Remove Favorites'; //Add the text to the p
+            saveText.setAttribute('onclick', `removeFavorite('${result.url}')`); //Add onclick attribute to remove item from favorites
+        }
         //Card Text
         const cardText = document.createElement('p'); //Create the p
         cardText.textContent = result.explanation; //Add the text to the p
@@ -74,6 +80,8 @@ function updateDOM(page) {
         favorites = JSON.parse(localStorage.getItem('nasaFavorites'));
         console.log('favorites from localStorage', favorites)
     };
+    //update image container each time DOM is updated
+    imagesContainer.textContent = '';
     // Create the DOM for the Main HTML Page
     createDOMNodes(page);
 }
@@ -104,11 +112,21 @@ function saveFavorite(itemUrl) {
             setTimeout(() => {
                 saveConfirmed.hidden = true
             }, 2000);
-            //Store favoritest into local storage (remember that to store something on servers local or not we need to convert it into json using JSON.stringfy() method)
+            //Store favorites into local storage (remember that to store something on servers local or not we need to convert it into json using JSON.stringfy() method)
             localStorage.setItem('nasaFavorites', JSON.stringify(favorites)); //Set local store using 'key' and JSON.stringify(value);
             //console.log(localStorage)
         }
     })
+}
+
+// Remove item from Favorites
+function removeFavorite(itemUrl) {
+    if (favorites[itemUrl]) {
+        delete favorites[itemUrl];
+        //Update favorites in local storage
+        localStorage.setItem('nasaFavorites', JSON.stringify(favorites));
+        updateDOM('favorites');//updateDOM after removing favorite
+    } 
 }
 
 // On Load
